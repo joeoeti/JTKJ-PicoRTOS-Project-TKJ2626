@@ -6,7 +6,10 @@
 #include "pico/stdlib.h"
 #include "pico/stdio.h"
 
+#include "FreeRTOS.h"
+#include "task.h"
 
+#define BUFFER_SIZE     64
 #define TEMP_MIN        0
 #define TEMP_MAX        40
 #define LUX_MIN         100
@@ -101,8 +104,8 @@ int main (void) {
     TaskHandle_t myPrintHandle = NULL;
 
     // Create tasks
-    xTaskCreate(printingTask, "print", 1024, NULL, 3, &myPrintHandle);
+    xTaskCreate(printTask, "print", 1024, NULL, 3, &myPrintHandle);
     xTaskCreate(sensorTask, "usb", 1024, NULL, 2, &mySensorHandle);
 
     vTaskStartScheduler();
-
+}
