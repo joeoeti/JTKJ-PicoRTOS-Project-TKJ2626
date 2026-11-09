@@ -17,7 +17,7 @@
 
 // Tehtävä 3: Tilakoneen esittely Add missing states.
 // Exercise 3: Definition of the state machine. Add missing states.
-enum state { WAITING=1};
+enum state {WAITING=1, PRINTING=2};
 enum state programState = WAITING;
 
 // Tehtävä 3: Valoisuuden globaali muuttuja
@@ -26,43 +26,41 @@ uint32_t ambientLight;
 
 static void btn_fxn(uint gpio, uint32_t eventMask) {
     // Tehtävä 1: Vaihda LEDin tila käyttämällä TKJHAT SDK:n sopivaa funktiota.
+    toggle_led();
     // Exercise 1: Toggle the LED using the appropriate function from the TKJHAT SDK.
 }
 
 static void sensor_task(void *arg){
     (void)arg;
     // Tehtävä 2: Alusta valoisuusanturi. Etsi SDK-dokumentaatiosta sopiva funktio.
+    init_veml6030();
     // Exercise 2: Init the light sensor. Find in the SDK documentation the adequate function.
    
     for(;;){
         
         // Tehtävä 2: Muokkaa tästä eteenpäin sovelluskoodilla. Kommentoi seuraava rivi.
-        //             
+        // ambientLight = veml6030_read_light();
+        // printf("Illuminance: %lu lux\n", ambientLight);
         // Exercise 2: Modify with application code here. Comment following line.
-        //             Read sensor data and print it out as string; 
-        tight_loop_contents(); 
-
-
-   
-
+        // Read sensor data and print it out as string; 
+        // tight_loop_contents(); 
 
         // Tehtävä 3:  Muokkaa aiemmin Tehtävässä 2 tehtyä koodia ylempänä.
         //             Jos olet oikeassa tilassa, tallenna anturin arvo tulostamisen sijaan
         //             globaaliin muuttujaan.
         //             Sen jälkeen muuta tilaa.
+        if (programState == WAITING) {
+            ambientLight = veml6030_read_light();
+            programState = PRINTING;
+        }
         // Exercise 3: Modify previous code done for Exercise 2, in previous lines. 
         //             If you are in adequate state, instead of printing save the sensor value 
         //             into the global variable.
         //             After that, modify state
 
-
-
-
-
-        
         // Exercise 2. Just for sanity check. Please, comment this out
         // Tehtävä 2: Just for sanity check. Please, comment this out
-        printf("sensorTask\n");
+        // printf("sensorTask\n");
 
         // Do not remove this
         vTaskDelay(pdMS_TO_TICKS(1000));
@@ -77,10 +75,14 @@ static void print_task(void *arg){
         // Tehtävä 3: Kun tila on oikea, tulosta sensoridata merkkijonossa serial-monitor-ikkunaan
         //            Muista tilamuutos
         //            Älä unohda kommentoida seuraavaa koodiriviä.
+        if (programState == PRINTING) {
+            printf("Illuminance: %lu lux\n", ambientLight);
+            programState = WAITING;
+        }
         // Exercise 3: Print out sensor data as string to serial monitor if the state is correct
         //             Remember to modify state
         //             Do not forget to comment next line of code.
-        tight_loop_contents();
+        // tight_loop_contents();
         
         // Exercise 4. Use usb_serial_print() instead of printf() for debug output
         //             produced after the USB serial library has been initialized.
@@ -101,7 +103,7 @@ static void print_task(void *arg){
 
         // Exercise 3. Just for sanity check. Please, comment this out
         // Tehtävä 3: Just for sanity check. Please, comment this out
-        printf("printTask\n");
+        // printf("printTask\n");
         
         // Do not remove this
         vTaskDelay(pdMS_TO_TICKS(1000));
@@ -145,6 +147,15 @@ int main() {
 
     // Exercise 1: Initialize the button and the led and define an register the corresponding interrupton.
     //             Interruption handler is defined up as btn_fxn
+    init_sw1();
+    init_led();
+
+    gpio_set_irq_enabled_with_callback(
+    SW1_PIN,
+    GPIO_IRQ_EDGE_FALL,
+    true,
+    &btn_fxn
+    );
     // Tehtävä 1:  Alusta painike ja LEd ja rekisteröi vastaava keskeytys.
     //             Keskeytyskäsittelijä on määritelty yläpuolella nimellä btn_fxn
 
