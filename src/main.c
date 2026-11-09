@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <string.h>
 
@@ -13,11 +12,8 @@
 // Exercise 4. Include the libraries necessaries to use the usb-serial-debug, and tinyusb
 // Tehtävä 4 . Lisää usb-serial-debugin ja tinyusbin käyttämiseen tarvittavat kirjastot.
 
-
-
 #define DEFAULT_STACK_SIZE 2048
 #define CDC_ITF_TX      1
-
 
 // Tehtävä 3: Tilakoneen esittely Add missing states.
 // Exercise 3: Definition of the state machine. Add missing states.
@@ -86,9 +82,6 @@ static void print_task(void *arg){
         //             Do not forget to comment next line of code.
         tight_loop_contents();
         
-
-
-        
         // Exercise 4. Use usb_serial_print() instead of printf() for debug output
         //             produced after the USB serial library has been initialized.
         //             Do not replace error messages that can execute before usb_serial_init().
@@ -106,9 +99,6 @@ static void print_task(void *arg){
         //            Tällä menetelmällä kirjoitettu data tulee antaa CSV-muodossa:
         //            timestamp, illuminance
 
-
-
-
         // Exercise 3. Just for sanity check. Please, comment this out
         // Tehtävä 3: Just for sanity check. Please, comment this out
         printf("printTask\n");
@@ -117,7 +107,6 @@ static void print_task(void *arg){
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }
-
 
 // Exercise 4: Uncomment the following line to activate the TinyUSB library.  
 // Tehtävä 4:  Poista seuraavan rivin kommentointi aktivoidaksesi TinyUSB-kirjaston. 
@@ -159,10 +148,6 @@ int main() {
     // Tehtävä 1:  Alusta painike ja LEd ja rekisteröi vastaava keskeytys.
     //             Keskeytyskäsittelijä on määritelty yläpuolella nimellä btn_fxn
 
-
-
-    
-    
     TaskHandle_t hSensorTask, hPrintTask, hUSB = NULL;
 
     // Exercise 4: Uncomment this xTaskCreate to create the task that enables dual USB communication.
@@ -175,7 +160,6 @@ int main() {
         vTaskCoreAffinitySet(hUSB, 1u << 0);
     #endif
     */
-
 
     // Create the tasks with xTaskCreate
     BaseType_t result = xTaskCreate(sensor_task, // (en) Task function
@@ -207,4 +191,3 @@ int main() {
     // Never reach this line.
     return 0;
 }
-
